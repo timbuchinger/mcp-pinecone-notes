@@ -40,7 +40,7 @@ dev = [
 ]
 
 [project.scripts]
-mcp-pinecone-notes = "mcp_pinecone_notes:main"
+mcp-pinecone-notes = "mcp_pinecone_notes.main:main"
 
 [tool.black]
 line-length = 88
