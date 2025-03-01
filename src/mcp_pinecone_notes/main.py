@@ -31,6 +31,10 @@ def get_pinecone_client() -> None:
 
     _pinecone_client = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
     _pinecone_index = _pinecone_client.Index(
+    _pinecone_index = _pinecone_client.Index(
+    os.environ.get("PINECONE_INDEX", ""),
+    host=os.environ.get("PINECONE_HOST", "")
+)
         os.environ.get("PINECONE_INDEX"), host=os.environ.get("PINECONE_HOST")
     )
     _pinecone_namespace = os.environ.get("PINECONE_NAMESPACE", "default")
