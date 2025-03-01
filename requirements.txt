@@ -1,0 +1,5 @@
+nomic[local]
+pinecone
+protobuf
+google-api-python-client
+python-dotenv

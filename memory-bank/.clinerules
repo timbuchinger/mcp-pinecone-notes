@@ -1,0 +1,60 @@
+# Cline Rules for MCP Pinecone Notes
+
+## Project Patterns
+
+### Code Organization
+1. Main application logic in src/mcp_pinecone_notes/main.py
+2. Environment configuration via .env file
+3. Package management through UV (pyproject.toml and uv.lock)
+
+### Implementation Patterns
+1. Async tool implementation for MCP server
+2. Global client initialization for Pinecone
+3. UUID-based document identification
+4. Text metadata attached to vectors
+
+### Command Patterns
+1. Primary execution: `uv run mcp_pinecone_notes`
+2. Direct execution: `uv run src/mcp_pinecone_notes/main.py`
+3. Debug with MCP inspector: `npx @modelcontextprotocol/inspector uv run src/mcp_pinecone_notes/main.py`
+
+### Environment Setup
+1. Required variables:
+   - PINECONE_API_KEY
+   - PINECONE_INDEX
+   - PINECONE_HOST
+
+## Documentation Standards
+
+### Memory Bank Updates
+1. Update after significant implementation changes
+2. Document new patterns as discovered
+3. Track progress in progress.md
+4. Keep activeContext.md current
+
+### Code Documentation
+1. Use docstrings for functions and classes
+2. Include type hints
+3. Document error handling
+4. Explain MCP tool parameters
+
+## Tool Usage Patterns
+
+### MCP Tools
+1. Single purpose tools
+2. Clear parameter documentation
+3. Async implementation
+4. Error response handling
+
+### Vector Operations
+1. Store original text in metadata
+2. Use default namespace
+3. Local embedding inference
+4. UUID-based storage
+
+## Project Evolution
+Track changes to these patterns as the project grows, particularly:
+1. New tool implementations
+2. Enhanced error handling
+3. Additional metadata fields
+4. Search functionality patterns
