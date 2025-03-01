@@ -16,7 +16,7 @@ _pinecone_namespace = None  # Will be set in get_pinecone_client()
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU support
 
 
-def get_pinecone_client():
+def get_pinecone_client() -> None:
     global _pinecone_client
     global _pinecone_index
     global _pinecone_namespace
@@ -70,7 +70,7 @@ async def add_note(note: str) -> str:
     return "Successfully added note."
 
 
-def main():
+def main() -> None:
     """Entry point for the Pinecone Notes MCP server."""
 
     get_pinecone_client()
