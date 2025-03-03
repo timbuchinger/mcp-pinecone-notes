@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from dotenv import load_dotenv
 from nomic import embed

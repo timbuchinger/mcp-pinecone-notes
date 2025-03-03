@@ -18,6 +18,36 @@ cd mcp-pinecone-notes
 pip install -e .
 ```
 
+### Development Setup
+
+For development, first install the package with development dependencies:
+
+```bash
+pip install -e .[dev]
+```
+
+This will install all required development tools:
+- ruff: For linting
+- black: For code formatting
+- mypy: For type checking
+- pytest: For running tests
+
+To run the same lint checks as the CI pipeline:
+
+```bash
+# Run linting
+ruff check .
+
+# Check code formatting
+black --check .
+
+# Run type checking
+mypy .
+
+# Run tests
+pytest
+```
+
 ## Configuration
 
 The following environment variables are required:
@@ -90,6 +120,8 @@ Add a note to storage with semantic embedding:
 The note will be embedded using the nomic-embed-text-v1.5 model and stored in Pinecone with a unique ID and timestamp.
 
 ## Integration in Claude
+
+```json
 {
   "mcpServers": {
     "pinecone": {
@@ -98,4 +130,4 @@ The note will be embedded using the nomic-embed-text-v1.5 model and stored in Pi
     }
   }
 }
-# mcp-pinecone-notes
+```
