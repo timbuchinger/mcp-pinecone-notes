@@ -3,10 +3,14 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version number (e.g., v1.0.0)'
+      bump:
+        description: 'Version increment type'
         required: true
-        type: string
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
 
 jobs:
   build:
@@ -15,6 +19,28 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Bump version and push tag
+        id: bump_version
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: false
+          DEFAULT_BUMP: ${{ inputs.bump }}
+
+      - name: Update pyproject.toml
+        run: |
+          sed -i "s/^version = \".*\"/version = \"${{ steps.bump_version.outputs.new_tag }}\"/" pyproject.toml
+
+      - name: Commit version update
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add pyproject.toml
+          git commit -m "Bump version to ${{ steps.bump_version.outputs.new_tag }}"
+          git push
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -28,15 +54,15 @@ jobs:
       - name: Upload wheel as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mcp-pinecone-notes-${{ inputs.version }}-py3-none-any.whl
+          name: mcp-pinecone-notes-${{ steps.bump_version.outputs.new_tag }}-py3-none-any.whl
           path: dist/*.whl
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*.whl
-          tag_name: ${{ inputs.version }}
-          name: Release ${{ inputs.version }}
+          tag_name: ${{ steps.bump_version.outputs.new_tag }}
+          name: Release ${{ steps.bump_version.outputs.new_tag }}
           draft: true
           prerelease: false
           generate_release_notes: true
