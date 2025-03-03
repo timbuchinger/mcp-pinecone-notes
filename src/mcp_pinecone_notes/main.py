@@ -1,3 +1,4 @@
+import argparse
 import os
 import uuid
 from datetime import datetime
@@ -16,18 +17,36 @@ _pinecone_namespace = None  # Will be set in get_pinecone_client()
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU support
 
 
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description="Pinecone Notes MCP Server")
+    parser.add_argument(
+        "--pinecone-api-key",
+        help="Pinecone API key (overrides environment variable)",
+    )
+    parser.add_argument(
+        "--pinecone-host",
+        help="Pinecone host (overrides environment variable)",
+    )
+    return parser.parse_args()
+
+
 def get_pinecone_client() -> None:
     global _pinecone_client
     global _pinecone_index
     global _pinecone_namespace
 
-    print(f"index: {os.environ.get('PINECONE_INDEX')}")
-    print(f"namespace: {os.environ.get('PINECONE_NAMESPACE')}")
+    # Parse command line arguments first
+    args = parse_args()
 
+    # Set environment variables from command line args if provided
+    if args.pinecone_api_key:
+        os.environ["PINECONE_API_KEY"] = args.pinecone_api_key
+    if args.pinecone_host:
+        os.environ["PINECONE_HOST"] = args.pinecone_host
+
+    # Load environment variables from .env file
     load_dotenv(override=False)
-
-    print(f"index: {os.environ.get('PINECONE_INDEX')}")
-    print(f"namespace: {os.environ.get('PINECONE_NAMESPACE')}")
 
     _pinecone_client = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
     _pinecone_index = _pinecone_client.Index(

@@ -50,7 +50,26 @@ pytest
 
 ## Configuration
 
-The following environment variables are required:
+The server can be configured through command line arguments or environment variables. Command line arguments take precedence over environment variables.
+
+### Command Line Arguments
+
+- `--pinecone-api-key`: Your Pinecone API key
+- `--pinecone-host`: Host URL for your Pinecone index
+
+Example:
+```bash
+mcp-pinecone-notes --pinecone-api-key YOUR_KEY --pinecone-host YOUR_HOST
+```
+
+With uvx:
+```bash
+uvx run mcp-pinecone-notes -- --pinecone-api-key YOUR_KEY --pinecone-host YOUR_HOST
+```
+
+### Environment Variables
+
+The following environment variables are supported:
 
 - `PINECONE_API_KEY`: Your Pinecone API key
 - `PINECONE_INDEX`: Name of your Pinecone index
@@ -80,7 +99,7 @@ uv run src/mcp_pinecone_notes/main.py
 Use the MCP inspector for testing:
 
 ```bash
-npx @modelcontextprotocol/inspector mcp-pinecone-notes
+npx @modelcontextprotocol/inspector uvx run mcp-pinecone-notes
 ```
 
 ## Docker
@@ -130,4 +149,3 @@ The note will be embedded using the nomic-embed-text-v1.5 model and stored in Pi
     }
   }
 }
-```
