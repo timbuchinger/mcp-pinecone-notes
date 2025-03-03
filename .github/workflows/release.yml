@@ -22,6 +22,12 @@ jobs:
         with:
           fetch-depth: '0'
 
+      - name: Get current version from pyproject.toml
+        id: current_version
+        run: |
+          VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Bump version and push tag
         id: bump_version
         uses: anothrNick/github-tag-action@1.67.0
@@ -29,12 +35,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: false
           DEFAULT_BUMP: ${{ inputs.bump }}
+          INITIAL_VERSION: ${{ steps.current_version.outputs.version }}
 
       - name: Update pyproject.toml
         run: |
-          sed -i "s/^version = \".*\"/version = \"${{ steps.bump_version.outputs.new_tag }}\"/" pyproject.toml
+          # More robust sed command that works with both Unix and Windows line endings
+          perl -i -pe 's/^version = ".*"/version = "${{ steps.bump_version.outputs.new_tag }}"/' pyproject.toml
+
+      - name: Check for changes
+        id: git_status
+        run: |
+          if [[ -n "$(git status --porcelain pyproject.toml)" ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Commit version update
+        if: steps.git_status.outputs.changed == 'true'
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
