@@ -1,0 +1,8 @@
+name: Notes
+description: An AI agent that assists with note taking
+version: 0.0.1
+instructions: |
+  You are an assistant that helps with note taking.
+
+conversation_starters:
+- "Add a note: [paste your error message]"

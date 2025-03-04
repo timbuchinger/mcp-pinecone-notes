@@ -149,3 +149,9 @@ The note will be embedded using the nomic-embed-text-v1.5 model and stored in Pi
     }
   }
 }
+
+## Update Agent
+
+```bash
+cp -r ~/git/mcp-pinecone-notes/agent/ ~/git/github/llm-functions/agents/notes/
+```

@@ -300,7 +300,7 @@ cli = [
 
 [[package]]
 name = "mcp-pinecone-notes"
-version = "0.0.1"
+version = "0.0.3"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },

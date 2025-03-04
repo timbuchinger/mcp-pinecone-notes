@@ -50,9 +50,88 @@ def get_pinecone_client() -> None:
 
     _pinecone_client = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
     _pinecone_index = _pinecone_client.Index(
-        os.environ.get("PINECONE_INDEX", ""), host=os.environ.get("PINECONE_HOST", "")
+        os.environ.get("PINECONE_INDEX", ""),
+        host=os.environ.get("PINECONE_HOST", ""),
     )
-    _pinecone_namespace = os.environ.get("PINECONE_NAMESPACE", "default")
+    _pinecone_namespace = os.environ.get("PINECONE_NAMESPACE", "aichat")
+
+
+@mcp.tool()
+async def search_notes(query: str) -> str:
+    """Search notes based on a query.query
+
+    Args:
+        query: The query to search for.
+    """
+    print(f"Search request: {query}")
+
+    # Initialize Pinecone client
+    api_key = os.environ.get("PINECONE_API_KEY")
+    pinecone_client = Pinecone(api_key=api_key)
+    pinecone_host = os.environ.get("PINECONE_HOST")
+    print(f"Connecting to Pinecone at {pinecone_host}")
+    print(f"API key: {api_key}")
+    pinecone_index = pinecone_client.Index(
+        os.environ.get("PINECONE_INDEX", ""),
+        host=pinecone_host,
+    )
+    pinecone_namespace = os.environ.get("PINECONE_NAMESPACE", "aichat")
+
+    print("Setting up embeddings...")
+    embeddings = embed.text(
+        texts=[query],
+        model="nomic-embed-text-v1.5",
+        task_type="search_document",
+        inference_mode="local",
+    )
+
+    try:
+        # Query both namespaces
+        results_aichat = pinecone_index.query(
+            namespace="aichat",
+            vector=embeddings,
+            top_k=3,
+            include_metadata=True,
+        )
+
+        results_notion = pinecone_index.query(
+            namespace="notion",
+            vector=embeddings,
+            top_k=3,
+            include_metadata=True,
+        )
+
+        # Process and combine results
+        all_results = []
+        for results in [results_aichat, results_notion]:
+            for match in results.matches:
+                metadata = match.metadata if match.metadata else {}
+                # Base result structure
+                result = {
+                    "content": metadata.get("text", "No content available"),
+                    "score": float(match.score) if match.score is not None else 1.0,
+                    "source": "notion" if metadata.get("notion_id") else "aichat",
+                }
+
+                # Add title only if it exists
+                if metadata.get("title"):
+                    result["title"] = metadata["title"]
+
+                all_results.append(result)
+
+        # Sort by score and take top 3
+        formatted_results = sorted(all_results, key=lambda x: x["score"], reverse=True)[
+            :3
+        ]
+
+        print(
+            f"Returning {len(formatted_results)} documents from 'aichat' and 'notion' namespaces."
+        )
+        return {"documents": formatted_results}
+
+    except Exception as e:
+        print(f"Error querying Pinecone: {e}")
+        return {"documents": []}
 
 
 @mcp.tool()
