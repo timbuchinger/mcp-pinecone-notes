@@ -1,5 +1,7 @@
 import argparse
+import logging
 import os
+import sys
 import uuid
 from datetime import datetime
 
@@ -8,6 +10,8 @@ from mcp.server.fastmcp import FastMCP
 from nomic import embed
 from pinecone import Pinecone
 
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+logger = logging.getLogger("mcp_pinecone_notes")
 # Initialize FastMCP server
 mcp = FastMCP("pinecone_notes")
 
@@ -58,49 +62,58 @@ def get_pinecone_client() -> None:
 
 @mcp.tool()
 async def search_notes(query: str) -> str:
-    """Search notes based on a query.query
+    """Search notes based on a query.
 
     Args:
         query: The query to search for.
     """
-    print(f"Search request: {query}")
+    logger.info(f"Search request: {query}")
 
     # Initialize Pinecone client
     api_key = os.environ.get("PINECONE_API_KEY")
     pinecone_client = Pinecone(api_key=api_key)
     pinecone_host = os.environ.get("PINECONE_HOST")
-    print(f"Connecting to Pinecone at {pinecone_host}")
-    print(f"API key: {api_key}")
+    logger.info(f"Connecting to Pinecone at {pinecone_host}")
+    logger.info(f"API key: {api_key}")
     pinecone_index = pinecone_client.Index(
         os.environ.get("PINECONE_INDEX", ""),
         host=pinecone_host,
     )
-    pinecone_namespace = os.environ.get("PINECONE_NAMESPACE", "aichat")
 
-    print("Setting up embeddings...")
-    embeddings = embed.text(
-        texts=[query],
-        model="nomic-embed-text-v1.5",
-        task_type="search_document",
-        inference_mode="local",
-    )
+    logger.info("Preparing embeddings...")
+    try:
+        embedding_output = embed.text(
+            texts=[query],
+            model="nomic-embed-text-v1.5",
+            task_type="search_document",
+            inference_mode="local",
+        )
+        # Extract the vector from the embeddings output
+        vector = embedding_output["embeddings"][0]
+        logger.info("Embedding generated successfully")
+    except Exception as e:
+        logger.error(f"Error generating embeddings: {e}")
+        return {"documents": []}
+    logger.info("embedding complete")
 
     try:
+        logger.info(f"Querying Pinecone for 'aichat' namespace...")
         # Query both namespaces
         results_aichat = pinecone_index.query(
             namespace="aichat",
-            vector=embeddings,
+            vector=vector,
             top_k=3,
             include_metadata=True,
         )
-
+        logger.info(f"Querying Pinecone for 'notion' namespace...")
         results_notion = pinecone_index.query(
             namespace="notion",
-            vector=embeddings,
+            vector=vector,
             top_k=3,
             include_metadata=True,
         )
-
+        logger.info(f"aichat count: {len(results_aichat.matches)}")
+        logger.info(f"notion count: {len(results_aichat.matches)}")
         # Process and combine results
         all_results = []
         for results in [results_aichat, results_notion]:
@@ -124,19 +137,19 @@ async def search_notes(query: str) -> str:
             :3
         ]
 
-        print(
+        logger.info(
             f"Returning {len(formatted_results)} documents from 'aichat' and 'notion' namespaces."
         )
         return {"documents": formatted_results}
 
     except Exception as e:
-        print(f"Error querying Pinecone: {e}")
+        logger.error(f"Error querying Pinecone: {e}")
         return {"documents": []}
 
 
 @mcp.tool()
 async def add_note(note: str) -> str:
-    """Add a note to storage without embeddings.
+    """Add a note to storage.
 
     Args:
         note: The note to add.
