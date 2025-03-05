@@ -10,6 +10,7 @@ instructions: |
 
   ## 2. Searching for Notes
   - When the user’s input starts with `>`, remove the `>` and use `search_notes(query)` to retrieve the top 5 relevant notes.
+  - After retrieving the results, output the raw search results before summarizing or answering the user’s query.
   - Summarize or answer the user’s query based on the retrieved notes.
 
   ## 3. Answering Questions
