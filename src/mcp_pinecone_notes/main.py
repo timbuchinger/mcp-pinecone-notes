@@ -97,26 +97,23 @@ async def search_notes(query: str) -> str:
     logger.info("embedding complete")
 
     try:
-        logger.info(f"Querying Pinecone for 'aichat' namespace...")
-        # Query both namespaces
-        results_aichat = pinecone_index.query(
-            namespace="aichat",
-            vector=vector,
-            top_k=3,
-            include_metadata=True,
-        )
-        logger.info(f"Querying Pinecone for 'notion' namespace...")
-        results_notion = pinecone_index.query(
-            namespace="notion",
-            vector=vector,
-            top_k=3,
-            include_metadata=True,
-        )
-        logger.info(f"aichat count: {len(results_aichat.matches)}")
-        logger.info(f"notion count: {len(results_aichat.matches)}")
-        # Process and combine results
+        # Get list of all namespaces
+        index_stats = pinecone_index.describe_index_stats()
+        namespaces = list(index_stats.namespaces.keys())
+        logger.info(f"Found {len(namespaces)} namespaces: {namespaces}")
+
+        # Query each namespace and collect results
         all_results = []
-        for results in [results_aichat, results_notion]:
+        for namespace in namespaces:
+            logger.info(f"Querying Pinecone for '{namespace}' namespace...")
+            results = pinecone_index.query(
+                namespace=namespace,
+                vector=vector,
+                top_k=3,
+                include_metadata=True,
+            )
+            logger.info(f"{namespace} count: {len(results.matches)}")
+            # Process results
             for match in results.matches:
                 metadata = match.metadata if match.metadata else {}
                 # Base result structure
@@ -138,7 +135,7 @@ async def search_notes(query: str) -> str:
         ]
 
         logger.info(
-            f"Returning {len(formatted_results)} documents from 'aichat' and 'notion' namespaces."
+            f"Returning {len(formatted_results)} documents from {len(namespaces)} namespaces."
         )
         return {"documents": formatted_results}
 

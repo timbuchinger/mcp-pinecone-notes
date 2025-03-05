@@ -100,6 +100,7 @@ Use the MCP inspector for testing:
 
 ```bash
 npx @modelcontextprotocol/inspector uvx run mcp-pinecone-notes
+npx @modelcontextprotocol/inspector uv run mcp-pinecone-notes -- --pinecone-api-key YOUR_KEY --pinecone-host YOUR_HOST
 ```
 
 ## Docker
