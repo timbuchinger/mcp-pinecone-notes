@@ -10,7 +10,7 @@ from mcp.server.fastmcp import FastMCP
 from nomic import embed
 from pinecone import Pinecone
 
-logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 logger = logging.getLogger("mcp_pinecone_notes")
 # Initialize FastMCP server
 mcp = FastMCP("pinecone_notes")
