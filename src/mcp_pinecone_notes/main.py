@@ -4,11 +4,12 @@ import os
 import sys
 import uuid
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
-from nomic import embed
-from pinecone import Pinecone
+from nomic import embed  # type: ignore
+from pinecone import Pinecone  # type: ignore
 
 logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 logger = logging.getLogger("mcp_pinecone_notes")
@@ -16,8 +17,9 @@ logger = logging.getLogger("mcp_pinecone_notes")
 mcp = FastMCP("pinecone_notes")
 
 # Global variables
-_pinecone_client = None
-_pinecone_namespace = None  # Will be set in get_pinecone_client()
+_pinecone_client: Optional[Pinecone] = None
+_pinecone_index: Any = None
+_pinecone_namespace: Optional[str] = None  # Will be set in get_pinecone_client()
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU support
 
 
@@ -68,7 +70,7 @@ def get_pinecone_client() -> None:
 
 
 @mcp.tool()
-async def search_notes(query: str) -> str:
+async def search_notes(query: str) -> Dict[str, List[Dict[str, Any]]]:
     """Search notes based on a query.
 
     Args:
@@ -152,7 +154,7 @@ async def search_notes(query: str) -> str:
 
 
 @mcp.tool()
-async def add_note(note: str) -> str:
+async def add_note(note: str) -> Dict[str, str]:
     """Add a note to storage.
 
     Args:
@@ -182,7 +184,7 @@ async def add_note(note: str) -> str:
         ],
         namespace=_pinecone_namespace,
     )
-    return "Successfully added note."
+    return {"message": "Successfully added note."}
 
 
 def main() -> None:

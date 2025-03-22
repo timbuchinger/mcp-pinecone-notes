@@ -5,8 +5,8 @@ import sys
 from typing import Any, Dict, List
 
 from dotenv import load_dotenv
-from nomic import embed
-from pinecone import Pinecone
+from nomic import embed  # type: ignore
+from pinecone import Pinecone  # type: ignore
 
 # Setup logging
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
@@ -53,7 +53,7 @@ def display_namespace_menu(namespaces: List[str]) -> None:
     print("0. exit")
 
 
-def get_embeddings(query: str) -> List[float]:
+def get_embeddings(query: str) -> Any:
     """Generate vector embeddings for the query."""
     try:
         embedding_output = embed.text(

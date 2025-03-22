@@ -2,8 +2,8 @@ import os
 from typing import Dict, List
 
 from dotenv import load_dotenv
-from nomic import embed
-from pinecone import Pinecone
+from nomic import embed  # type: ignore
+from pinecone import Pinecone  # type: ignore
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU support
 # Document text for embedding
