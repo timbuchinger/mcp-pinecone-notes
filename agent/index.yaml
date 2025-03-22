@@ -1,6 +1,6 @@
 name: Notes
 description: An AI agent that assists with note taking
-version: 0.0.1
+version: 0.0.2
 use_tools: add_note,pinecone_add_note
 instructions: |
   # System Instructions for AI Agent
@@ -30,3 +30,4 @@ instructions: |
 conversation_starters:
 - "Add a note: [paste your error message]"
 - "Search my notes for: [paste your question]"
+- "Summarize my notes for: [paste your question]"
