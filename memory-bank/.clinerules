@@ -37,6 +37,7 @@
 2. Include type hints
 3. Document error handling
 4. Explain MCP tool parameters
+5. Run scripts/lint.py after code changes to ensure no new issues
 
 ## Tool Usage Patterns
 
