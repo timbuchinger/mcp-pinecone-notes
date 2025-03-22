@@ -141,7 +141,8 @@ async def search_notes(query: str) -> str:
         ]
 
         logger.info(
-            f"Returning {len(formatted_results)} documents from {len(namespaces)} namespaces."
+            f"Returning {len(formatted_results)} documents "
+            f"from {len(namespaces)} namespaces."
         )
         return {"documents": formatted_results}
 
