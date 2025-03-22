@@ -174,7 +174,7 @@ async def add_note(note: str) -> Dict[str, str]:
     # Insert the document into Pinecone with timestamp
     doc_id = str(uuid.uuid4())
     current_time = datetime.now().isoformat()
-    _pinecone_index.upsert(
+    await _pinecone_index.upsert(
         vectors=[
             {
                 "id": doc_id,
