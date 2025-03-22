@@ -1,0 +1,38 @@
+[
+  {
+    "name": "pinecone_search_notes",
+    "description": "Search notes based on a query.\n\n    Args:\n        query: The query to search for.\n    ",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "search_notesArguments"
+    },
+    "mcp": "pinecone"
+  },
+  {
+    "name": "pinecone_add_note",
+    "description": "Add a note to storage.\n\n    Args:\n        note: The note to add.\n    ",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note"
+      ],
+      "title": "add_noteArguments"
+    },
+    "mcp": "pinecone"
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "pinecone": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "/full/qualified/path/to/mcp_pinecone_notes-0.0.7-py3-none-any.whl",
+        "--directory",
+        "/fully/qualified/path/to/llm-functions/",
+        "mcp-pinecone-notes",
+        "--pinecone-api-key",
+        "your_api_key_here",
+        "--pinecone-host",
+        "your_host_here"
+      ]
+    }
+  }
+}

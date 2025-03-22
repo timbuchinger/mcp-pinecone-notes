@@ -12,6 +12,11 @@ The project is in its initial implementation phase with core note storage functi
 3. Enhanced metadata tracking
    - Added automatic date_added timestamp
    - ISO format datetime storage
+4. Search Results Refinement
+   - Simplified result format (Title and Content)
+   - Optional title field handling
+   - Streamlined metadata structure
+   - Improved source identification
 
 ## Active Decisions
 1. **Storage Strategy**

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-pinecone-notes"
-version = "0.1.0"
+version = "0.0.9"
 description = "MCP server for managing notes with pinecone vector database"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -40,7 +40,7 @@ dev = [
 ]
 
 [project.scripts]
-mcp-pinecone-notes = "mcp_pinecone_notes:main"
+mcp-pinecone-notes = "mcp_pinecone_notes.main:main"
 
 [tool.black]
 line-length = 88
@@ -49,8 +49,14 @@ target-version = ["py311"]
 [tool.ruff]
 target-version = "py311"
 line-length = 88
+
+[tool.ruff.lint]
 select = ["E", "F", "B", "I"]
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
