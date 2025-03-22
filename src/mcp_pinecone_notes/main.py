@@ -32,6 +32,11 @@ def parse_args() -> argparse.Namespace:
         "--pinecone-host",
         help="Pinecone host (overrides environment variable)",
     )
+    parser.add_argument(
+        "--pinecone-namespace",
+        default="mcp",
+        help="Pinecone namespace (overrides environment variable, defaults to 'mcp')",
+    )
     return parser.parse_args()
 
 
@@ -48,6 +53,8 @@ def get_pinecone_client() -> None:
         os.environ["PINECONE_API_KEY"] = args.pinecone_api_key
     if args.pinecone_host:
         os.environ["PINECONE_HOST"] = args.pinecone_host
+    if args.pinecone_namespace:
+        os.environ["PINECONE_NAMESPACE"] = args.pinecone_namespace
 
     # Load environment variables from .env file
     load_dotenv(override=False)
@@ -57,7 +64,7 @@ def get_pinecone_client() -> None:
         os.environ.get("PINECONE_INDEX", ""),
         host=os.environ.get("PINECONE_HOST", ""),
     )
-    _pinecone_namespace = os.environ.get("PINECONE_NAMESPACE", "aichat")
+    _pinecone_namespace = os.environ.get("PINECONE_NAMESPACE", "mcp")
 
 
 @mcp.tool()
