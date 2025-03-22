@@ -81,7 +81,6 @@ async def search_notes(query: str) -> str:
     pinecone_client = Pinecone(api_key=api_key)
     pinecone_host = os.environ.get("PINECONE_HOST")
     logger.info(f"Connecting to Pinecone at {pinecone_host}")
-    logger.info(f"API key: {api_key}")
     pinecone_index = pinecone_client.Index(
         os.environ.get("PINECONE_INDEX", ""),
         host=pinecone_host,
