@@ -1,4 +1,5 @@
 import os
+from typing import Generator
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -7,24 +8,24 @@ from mcp_pinecone_notes.main import add_note, mcp
 
 
 @pytest.fixture
-def mock_embed():
+def mock_embed() -> Generator[AsyncMock, None, None]:
     with patch("mcp_pinecone_notes.main.embed") as mock:
         mock.text.return_value = {"embeddings": [[0.1, 0.2, 0.3]]}
         yield mock
 
 
 @pytest.fixture
-def mock_pinecone_index():
+def mock_pinecone_index() -> Generator[AsyncMock, None, None]:
     with patch("mcp_pinecone_notes.main._pinecone_index") as mock:
 
-        async def async_return():
+        async def async_return() -> None:
             return None
 
         mock.upsert = AsyncMock(return_value=async_return())
         yield mock
 
 
-def test_server_initialization():
+def test_server_initialization() -> None:
     """Test that the MCP server is initialized with correct name."""
     assert mcp.name == "pinecone_notes"
     # Check that tools are registered
@@ -32,7 +33,7 @@ def test_server_initialization():
 
 
 @pytest.mark.asyncio
-async def test_add_note(mock_embed, mock_pinecone_index):
+async def test_add_note(mock_embed: AsyncMock, mock_pinecone_index: AsyncMock) -> None:
     """Test adding a note with mocked dependencies."""
     # Test data
     test_note = "Test note content"

@@ -29,11 +29,13 @@ def run_command(
             capture_output=True,
             text=True,
         )
-        if show_output:
+        # Always show output for failed commands
+        # Respect show_output flag for successful ones
+        if result.returncode != 0 or show_output:
             if result.stdout:
                 print(result.stdout)
             if result.stderr:
-                print(result.stderr, file=sys.stderr)
+                print(f"{FAIL}{result.stderr}{ENDC}", file=sys.stderr)
 
         execution_time = time.time() - start_time
         status = "✓" if result.returncode == 0 else "✗"
@@ -94,33 +96,18 @@ def main() -> int:
         exit_codes.append(code)
 
     if run_all or args.pytest:
-        try:
+        code, _ = run_command(["pytest"], "pytest", show_output=args.verbose)
+        # Don't treat pytest as failing if no tests were collected
+        if code == 5:
             result = subprocess.run(
                 ["pytest"],
                 check=False,
                 capture_output=True,
                 text=True,
             )
-            code = result.returncode
-            # Don't treat pytest as failing if no tests were collected
-            if code == 5 and "no tests ran" in result.stdout:
+            if "no tests ran" in result.stdout:
                 code = 0
-            if args.verbose or code != 0:
-                if result.stdout:
-                    print(result.stdout)
-                if result.stderr:
-                    print(result.stderr, file=sys.stderr)
-
-            status = "✓" if code == 0 else "✗"
-            color = OKGREEN if code == 0 else FAIL
-            print(
-                f"{color}{status} pytest "
-                f"(took {time.time() - total_time_start:.2f}s, exit code: {code}){ENDC}"
-            )
-            exit_codes.append(code)
-        except Exception as e:
-            print(f"{FAIL}Error running pytest: {e}{ENDC}", file=sys.stderr)
-            exit_codes.append(1)
+        exit_codes.append(code)
 
     # Print summary
     total_time = time.time() - total_time_start
