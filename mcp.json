@@ -11,7 +11,9 @@
         "--pinecone-api-key",
         "your_api_key_here",
         "--pinecone-host",
-        "your_host_here"
+        "your_host_here",
+        "--pinecone-namespace",
+        "default"
       ]
     }
   }
